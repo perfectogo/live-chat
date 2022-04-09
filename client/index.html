@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Live Chat</title>
+    <style>
+        p{
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body style="display: flex; flex-direction: column; align-items: center;">
+
+	<h1>Live Chat</h1>
+   
+    <div style="width:290px; height:240px; overflow-y: auto; border: 1px solid black; margin-bottom: 15px; padding: 8px; box-sizing: border-box;"></div>
+	<input id="user" style="width: 285px; display: block;" placeholder="receiver"/>
+	<input id="message" style="width: 285px; margin-top: 10px; display: block;" placeholder="Message"/>
+    <button style="width:295px; border-radius: 4px; margin-top: 8px; background: rgb(60, 175, 236);">send</button>
+
+
+<script type="text/javascript">
+	
+	const ws = new WebSocket('ws://localhost:8080/echo')
+
+	const messageInput = document.querySelector('#message')
+	const userInput = document.querySelector('#user')
+	const btn = document.querySelector('button')
+  
+    btn.onclick = () => {
+		sendInput()
+	}
+
+    messageInput.addEventListener('keyup', function(e){
+        if(e.keyCode === 13){
+            sendInput()
+        }
+    })
+
+    function sendInput(){
+        let username = window.localStorage.getItem('app_username')
+
+			if (!username) {
+
+				username = prompt('Input Username')
+
+				localStorage.setItem('app_username', username)
+			}
+
+			const message = { 
+                content: messageInput.value,
+                username: username, 
+                geterUsername: userInput.value
+
+             }
+
+			const JSONString = JSON.stringify(message)
+
+			ws.send(JSONString)
+
+			messageInput.value = null
+    }
+
+	ws.onmessage = e => {
+
+		const message = JSON.parse(e.data)
+        const div = document.querySelector('div')
+        const p1 = document.createElement("p") 
+        p1.textContent = message.content
+        div.appendChild(p1)
+		console.log(message.content + ' from ' + message.username)
+	}
+
+</script>
+</body>
+</html>
