@@ -1,2 +1,2 @@
 # live-chat
-sample live char. using: Golang, gin, WebSocket, PostgreSQL
+sample live chat. using: Golang, gin, WebSocket, PostgreSQL
