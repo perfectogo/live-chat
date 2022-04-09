@@ -28,28 +28,20 @@ var (
 )
 
 func WebSocket(ctx *gin.Context) {
-	//
 	conn, err := upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	defer conn.Close()
 	if err != nil {
-		log.Println("-1-")
 		log.Fatal(err)
 	}
 	Clients[conn] = true
 
-	//
 	for {
 		message := Message{}
-
 		err := conn.ReadJSON(&message)
-
 		if err != nil {
-			log.Println(err, "-2-")
-			//	log.Fatal(err)
 			delete(Clients, conn)
 			break
 		}
-
 		Messages <- message
 	}
 }
